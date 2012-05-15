@@ -1,0 +1,24 @@
+Android SDK and Eclipse version - Eclipse SDK Version: 3.7.2
+
+Host Operating System - Windows 7
+
+Hardware used - Arduino microcontroller ,7-segment display shield,proximity sensor,motion sensor,X-10 microcontroller
+
+Project Description - Developed the Android Java Program to be able to control the sensors (temperature, light and motion sensors) connected to Arduino shield; with C program acting as the intermediary.Android and C program communicated through the socket connection, with C communicating with Arduino through serial connection. We used the X-10 controller with Arduino to actually drive the lamp and a fan connected to the ‘Lamp Module’
+
+
+FUNCTIONALITY OF DIFFERENT COMPONENTS
+
+○  Android Application
+■	This component was responsible for querying and storing the current temperature every minute. The application stored the temperature in a SQLite database and allowed the user to view a temperature history. It also allowed the user to turn a device hooked up to X10 on or off. It shows the user a graphical representation of the current temperature via changing picture on the main control screen. The android application used an asynctask to completely open and close a socket connection to the server every time it wants to send a command.The application also allows the user to turn on/off the X10 device at some pre-configured time.The application also displays a notification if the temperature reaches a certain threshold.
+
+○	Server (C Code)
+■	The server code runs in an endless loop waiting for a socket connection. It then acts accordingly depending on what text is received from the socket connection. If the java application sends a query command, it will ping the arduino through serial connection for the temperature and then write it back to the socket connection and close the connection. If it receives an X10 command, it simply sends the command to the arduino and closes the connection without a response back to the socket connection.
+
+○	Arduino (Subset C Code)
+■	The arduino code also runs in an endless loop waiting for a SerialEvent from the arduino. In the loop it also calculates and displays the current temperature. Based on the temperature, it has the responsibility of updating a LED light to one of 3 colors based on the current temperature. The arduino code also is responsible for keeping track of any motion activity, and after an extended period of no motion, it will send an off command to the X10 module.
+
+○	Arduino Application Code
+■	The most important part of the Arduino code are setup function and a main loop that are running all the time. In the setup code, the Arduino setups the serial connection with the C server and other input/output connections with temperature, motion and proximity sensor. Also, it has to build the connection with the X10 transmitter. In the main loop, the server will do the following jobs sequentially: read from the temperature sensor, read from the motion sensor, read from the proximity sensor, write to the serial port, send corresponding command to the X10 transmitter and listen to the server for new instructions at last of the loop.
+
+
